@@ -1,0 +1,166 @@
+--------Introduction to log4j---------
+
+-> Logging framework. OS library. Java logging API
+-> Logging is a powerful aid for understanding and debugging the runtime behavior of the programs. 
+-> logging means some way to indicate the state of the system at runtime.
+-> Logs are used to capture and persists the important data and make it available for analysis at any point in time.
+-> In log4j, we use log statements in the code to know the condition of a project while it is executing.
+
+-> Why do u need to have a logging framework?
+   -> Log msgs have to provide correct and required information inorder to understand what application does internally.
+   -> Quick Debugging and Problem Diagnosis: No matter how well written our code is, there may be some problems hidden in it. 
+      If you review the logging process, then we will be able to detect the problems precisely and quickly.
+   -> It supports multiple outputs of appenders per logger. At a time the log info can be available at multiple destinations, such as in the file as well as in the console.
+   -> You can change the format of logging info by specifying it in the properties file.
+   
+-> Disadvantages : Increases the size of the code, badly produced log info might lead to confusion
+
+ Destinations : Log4j views the logging process mechanisms to direct logging information to a great variety of destinations, such as a console, database, file, UNIX Syslog, etc.
+ 
+ ------------------Architecture---------------
+
+It is a layered architecture.
+ Logger,Appender,Layout
+ 
+ ------Log4J Components------
+ 
+ 1]  Logger
+     -> Logger component is used to enable the log4j in our java class.
+     -> This is the top layer. Logger class is present in apache.log4j.* 
+     -> Need to create and object of logger class with static return type.
+     -> create one logger object per class, log info will be generated.
+     -> Ex: static Logger log = Logger.getLogger(YourClassName.class) 
+     -> Logger object has some methods; these methods are used to print the status of our application:
+                 debug(),info(),warn(),error(),fatal().
+ 2]  Appender
+     -> Appender is an interface.
+     -> The Appender object is responsible for publishing logging information to various preferred destinations such as a file, database, console, Unix Syslog, etc.
+     -> Logger classes are used to generate statements in different levels, and Appender takes these logs and stores in some database or files.
+     
+     1] FileAppender: used to append log events to a file.
+        *RollingFileAppender : back up to a file until it reaches certain size.
+        *DailyRollingFileAppender : back up to a file at a user chosen frequency.
+     2] ConsoleAppender: Appends log events to System.err or System.out using a layout specified by the user. The default console is System.out.
+     3] JDBCAppender: Used for Database.
+     4] SMTPAppender: Used to send an email when a specific logging event occurs, typically on errors or fatal errors.
+     5] SocketAppender: Used for remote storage.
+     6] SyslogAppender: Sends messages to a remote Syslog domain.
+     7] TelnetAppender: Specializes in writing to a read-only socket.
+     8] WriterAppender: Used to append log events to a Writer or an OutputStream depending on the user's choice.
+     
+ 3]  Layout
+     -> The layout layer provides Layout objects which are used to format logging information in different styles. 
+     -> It is used to provide support to appender objects before publishing logging information.
+     -> Appender will write the log info into the destination repo acc to specific format.
+     -> The log info is created by Logger and it is received by the Appender and then it is sent to Layout to format the style of the log info and then it then appends the log info to different destinations
+     -> There are different types of layout classes in log4j:
+			* SimpleLayout: It is used to format the output in a very simple manner; it prints the Level, then a dash "-" and then the log message.
+			* PatternLayout: Used to format the output based on conversion pattern specified or if none is specified, the default conversion pattern is considered.
+			* HTMLLayout: It formats the output as an HTML table.
+			* XMLLayout
+			
+ 4] Support Objects
+    1] Level object
+       -> There are seven levels of logging defined within the API: OFF, DEBUG, INFO, ERROR, WARN, FATAL, and ALL.
+    2] Filter Object
+       -> This object analyzes logging information and makes additional decisions on whether that information should be logged or not.
+    3] ObjectRenderer
+       -> prepare the final logging information.specialized in providing a String representation of different objects(log info) passed to the logging framework.
+    4] LogManager
+       -> It manages the logging framework acc to the properties mentioned the configuration file.(Ex : application.properties file or log4j.properties file).
+       -> By default, the LogManager searches for a file named log4j.properties in the CLASSPATH.
+      
+----------------Log4j.properties------------------
+
+-> This file will contain log4j appenders information, log level information and output file names for file appenders.
+-> It stores the properties in key-value pairs. 
+-> Syntax of log4j properties :
+   -> the root logger name with the appender object name. Ex : log4j.rootLogger = DEBUG, FILE  
+   -> add the type of appender object. Ex: log4j.appender.FILE=org.apache.log4j.FileAppender  
+   -> Define the conversion pattern and layout for file appender  Ex: log4j.appender.FILE.layout=org.apache.log4j.PatternLayout 
+   -> One can send output to multiple destinations at a time.
+   
+
+----------------Logging levels--------------------
+
+1] ALL	: This level turns on all levels of logging.
+2] DEBUG : Debug is used a lot for debugging the application at development time. 
+           Every log message will appear to log files once this level is set.
+3] INFO :  The INFO logging level is used to record messages about routine application operation.
+4] WARN :	WARN log level is used to indicate that you might have a problem and that you've detected an unusual situation.
+5] ERROR : The ERROR log level is used to denote a serious problem that you must have to investigate immediately.    Ex: unexpected formatted input, database unavailability.
+           log4j.rootLogger = WARN, FILE  
+6] FATAL : The FATAL log level, like ERROR, designates a problem. But unlike ERROR, it designates a very serious error event. 
+           You will not consider their presence very much on a normal day, but once they appear, it signals very bad news, even the application of death.
+7] OFF : This is the highest possible rank and is intended to turn off logging.
+8] Trace : includes more information to debug level logs.  
+
+Ex : log4j.rootLogger=DEBUG, consoleAppender  . here debug is the log level and root logger.
+     
+     
+------------------------Log4J Logging Methods----------------------
+
+-> The Logger class does not allow us to instantiate a new Logger instance.
+-> It is possible with two static methods for obtaining a Logger object.
+   -> public static Logger getRootLogger();  : returns the root logger of application instance
+   -> public static Logger getLogger(String name);   :  static Logger log = Logger.getLogger(log4jExample.class);
+          
+      -> Ex : import org.apache.log4j.Logger;  
+				public class JavaTpoint {  
+				   private static org.apache.log4j.Logger log = Logger.getLogger(LogClass.class);  
+				     
+				   public static void main(String[] args) {  
+				     
+				      log.trace("Trace Message!");  
+				      log.debug("Debug Message!");  
+				      log.info("Info Message!");  
+				      log.warn("Warn Message!");  
+				      log.error("Error Message!");  
+				      log.fatal("Fatal Message!");  
+				   }  
+				}
+				
+------------FileAppender Parameters----------------------
+
+		Define the root logger with appender file  
+		log = /usr/home/log4j  
+		  
+		# Define the root logger with appender file  
+		log4j.rootLogger = DEBUG, FILE  
+		  
+		# Define the file appender  
+		log4j.appender.FILE=org.apache.log4j.FileAppender  
+		  
+		# Set the name of the file  
+		log4j.appender.FILE.File=${log}/log.out  
+		  
+		# Set the immediate flush to true (default)  
+		log4j.appender.FILE.ImmediateFlush=true  
+		  
+		# Set the threshold to debug mode  
+		log4j.appender.FILE.Threshold=debug  
+		  
+		# Set the append to false, overwrite  
+		log4j.appender.FILE.Append=false  
+		  
+		# Define the layout for file appender  
+		log4j.appender.FILE.layout=org.apache.log4j.PatternLayout  
+		log4j.appender.FILE.layout.conversionPattern=%m%n 
+		
+		#DatePattern: This indicates when to rollover the file and the naming convention to be followed. 
+		  By default, rollover is performed at midnight per day. 
+			'.' yyyy-MM	Rollover at the end of per month and the beginning of the next month.
+			'.' yyyy-MM-dd	Rollover at midnight per day. It is the default value.
+			'.' yyyy-MM-dd-a	Rollover is performed at mid day and midnight of each day.
+			'.' yyyy-MM-dd-HH	Rollover at the top of every hour.
+			'.' yyyy-MM-dd-HH-mm	Rollover every minute.
+			'.' yyyy-ww	Rollover is performed on the first day of each week depending upon the locale.
+		
+------------ In the Log4j project-------------
+The logging info is being appended in following ways :  
+-> ConsoleAppender : log info is captured in the console.
+-> FileAppender : HtmlLayout and Pattern layout.    
+
+
+ 
+     
